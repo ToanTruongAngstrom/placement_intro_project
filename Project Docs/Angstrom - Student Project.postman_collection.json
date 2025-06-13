@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "ef1b33b3-6108-435d-8eb4-82386ea769ff",
+		"name": "Angstrom - Student Mini Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/players",
+			"item": [
+				{
+					"name": "GET First Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const json = pm.response.json();",
+									"pm.environment.set(\"queryExecutionId\", json.queryExecutionId);",
+									"pm.environment.set(\"nextToken\", json.nextToken);",
+									"pm.environment.set(\"columns\", JSON.stringify(json.columns));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/players",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"players"
+							]
+						},
+						"description": "Fetch the first page of results from /players."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Paginated Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/players?queryExecutionId={{queryExecutionId}}&nextToken={{nextToken}}&columns={{columns}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"players"
+							],
+							"query": [
+								{
+									"key": "queryExecutionId",
+									"value": "{{queryExecutionId}}"
+								},
+								{
+									"key": "nextToken",
+									"value": "{{nextToken}}"
+								},
+								{
+									"key": "columns",
+									"value": "{{columns}}"
+								}
+							]
+						},
+						"description": "Fetch paginated results from /players using queryExecutionId and nextToken."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/fixtures",
+			"item": [
+				{
+					"name": "GET First Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const json = pm.response.json();",
+									"pm.environment.set(\"queryExecutionId\", json.queryExecutionId);",
+									"pm.environment.set(\"nextToken\", json.nextToken);",
+									"pm.environment.set(\"columns\", JSON.stringify(json.columns));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/fixtures",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"fixtures"
+							]
+						},
+						"description": "Fetch the first page of results from /fixtures."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Paginated Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/fixtures?queryExecutionId={{queryExecutionId}}&nextToken={{nextToken}}&columns={{columns}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"fixtures"
+							],
+							"query": [
+								{
+									"key": "queryExecutionId",
+									"value": "{{queryExecutionId}}"
+								},
+								{
+									"key": "nextToken",
+									"value": "{{nextToken}}"
+								},
+								{
+									"key": "columns",
+									"value": "{{columns}}"
+								}
+							]
+						},
+						"description": "Fetch paginated results from /fixtures using queryExecutionId and nextToken."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/boxscores",
+			"item": [
+				{
+					"name": "GET First Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const json = pm.response.json();",
+									"pm.environment.set(\"queryExecutionId\", json.queryExecutionId);",
+									"pm.environment.set(\"nextToken\", json.nextToken);",
+									"pm.environment.set(\"columns\", JSON.stringify(json.columns));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/boxscores",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"boxscores"
+							]
+						},
+						"description": "Fetch the first page of results from /boxscores."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Paginated Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/boxscores?queryExecutionId={{queryExecutionId}}&nextToken={{nextToken}}&columns={{columns}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"boxscores"
+							],
+							"query": [
+								{
+									"key": "queryExecutionId",
+									"value": "{{queryExecutionId}}"
+								},
+								{
+									"key": "nextToken",
+									"value": "{{nextToken}}"
+								},
+								{
+									"key": "columns",
+									"value": "{{columns}}"
+								}
+							]
+						},
+						"description": "Fetch paginated results from /boxscores using queryExecutionId and nextToken."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/results",
+			"item": [
+				{
+					"name": "GET First Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const json = pm.response.json();",
+									"pm.environment.set(\"queryExecutionId\", json.queryExecutionId);",
+									"pm.environment.set(\"nextToken\", json.nextToken);",
+									"pm.environment.set(\"columns\", JSON.stringify(json.columns));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/three_pt_contest_historical_results",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"three_pt_contest_historical_results"
+							]
+						},
+						"description": "Fetch the first page of results from /three_pt_contest_historical_results."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Paginated Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/three_pt_contest_historical_results?queryExecutionId={{queryExecutionId}}&nextToken={{nextToken}}&columns={{columns}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"three_pt_contest_historical_results"
+							],
+							"query": [
+								{
+									"key": "queryExecutionId",
+									"value": "{{queryExecutionId}}"
+								},
+								{
+									"key": "nextToken",
+									"value": "{{nextToken}}"
+								},
+								{
+									"key": "columns",
+									"value": "{{columns}}"
+								}
+							]
+						},
+						"description": "Fetch paginated results from /three_pt_contest_historical_results using queryExecutionId and nextToken."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://d2c6afifpk.execute-api.eu-west-2.amazonaws.com/dev"
+		},
+		{
+			"key": "queryExecutionId",
+			"value": ""
+		},
+		{
+			"key": "nextToken",
+			"value": ""
+		},
+		{
+			"key": "columns",
+			"value": ""
+		}
+	]
+}
