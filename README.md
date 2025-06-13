@@ -8,8 +8,8 @@
 - **NBA Stats (Shooting Percentages by Distance to Basket)**  
   https://www.nba.com/stats/players/shooting  
 
-- **Underlying API** (raw data):  
-  https://stats.nba.com/stats/leaguedashplayershotlocations
+  - **Underlying API** (raw data):  
+    https://stats.nba.com/stats/leaguedashplayershotlocations
 
 - **Shot-by-Shot Data via `nba_api`**  
   - Docs: https://github.com/swar/nba_api/blob/master/docs/table_of_contents.md  
