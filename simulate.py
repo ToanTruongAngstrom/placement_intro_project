@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 import glob
 import heapq
 import os
@@ -111,23 +111,92 @@ def sim_qualifiers(participants, model="bayesian"):
     for participant in participants:
         name = participant["firstname"] + " " + participant["surname"]
         id = participant["playerid"]
-        scores[id] = {"name": name, "score": simulate(id, model=model)}
-    finalists = heapq.nlargest(3, scores.items(), key=lambda i: i[1]["score"])
+        scores[id] = {"name": name, "score": simulate(id, model=model)[0]}
+    
+    finalists = top_3_with_tiebreak(scores, model)
+    # finalists = heapq.nlargest(3, scores.items(), key=lambda i: i[1]["score"])
+    return finalists
+
+    
+def top_3_with_tiebreak(scores, model="bayesian"):
+    score_groups = defaultdict(list)
+    for id, data in scores.items():
+        score_groups[data["score"]].append((id, data))
+    
+    sorted_scores = sorted(score_groups.keys(), reverse=True)
+    finalists = []
+    for score in sorted_scores:
+        remaining_slots = 3 - len(finalists)
+        if remaining_slots == 0:
+            break
+
+        group = score_groups[score]
+
+        if len(group) <= remaining_slots:
+            finalists.extend(group)
+        else:
+            # Tie-break needed
+            selected = sim_tiebreak(group, remaining_slots, model=model)
+            finalists.extend(selected)
     return finalists
     
+def sim_tiebreak(participants, num_needed, model="bayesian"):
+    assert num_needed <= len(participants)
+    
+    current_group = participants
+    result = []
+    while True:
+        # Simulate new scores
+        scores = {
+            id: {"name": data["name"], "score": simulate(id, model=model)[0]}
+            for id, data in current_group
+        }
+        ranked = sorted(scores.items(), key=lambda x: x[1]["score"], reverse=True)
+        ranked_participants = [(id, {"name": scores[id]["name"], "score": scores[id]["score"]}) for id, _ in ranked]
+
+        # Check if there's a clean cutoff
+        top = ranked_participants[:num_needed]
+        if len(ranked_participants) <= num_needed:
+            return ranked_participants
+        # Check for tie at cutoff point
+        cutoff_score = scores[top[-1][0]]["score"]
+        tied_group = [p for p in ranked_participants if scores[p[0]]["score"] == cutoff_score]
+        qualified = [p for p in ranked_participants if scores[p[0]]["score"] > cutoff_score]
+        if len(tied_group) == num_needed - len(qualified):
+            result.extend(ranked_participants[:num_needed])
+            return result
+        
+        # Tie still exists, simulate again for tied group
+        num_needed = num_needed - len(qualified)
+        result.extend(qualified)
+        current_group = tied_group
+
 def sim_finals(finalists, model="bayesian"):
-    final_scores = dict()
-    for participant in finalists:
-        id = participant[0]
-        final_scores[id] = {"name": participant[1]["name"], "score": simulate(id, model=model)}
-    winner = max(final_scores.values(), key=lambda x:x["score"])["name"]
-    return winner
+    # First simulation
+    final_scores = {
+        id: {"name": data["name"], "score": simulate(id, model=model)[0]}
+        for id, data in finalists
+    }
+    # Find the top score
+    max_score = max(p["score"] for p in final_scores.values())
+    top_ids = [id for id, p in final_scores.items() if p["score"] == max_score]
+
+    if len(top_ids) == 1:
+        return final_scores[top_ids[0]]["name"]
+
+    # Tie detected: build tie group
+    tie_group = [(id, {"name": final_scores[id]["name"]}) for id in top_ids]
+
+    # Break the tie until one winner remains
+    winner = sim_tiebreak(tie_group, num_needed=1, model=model)[0]
+    return winner[1]["name"]
+
     
 # scores = simulate(1050, n=1000)
 # counts = Counter(scores)
 # plt.bar(counts.keys(), counts.values())
 # plt.show()
 
-# implied_probs, decimal_odds = simulate_contest()
-# print(f"Implied probabilities: {implied_probs}")
-# print(f"Decimal odds: {decimal_odds}")
+implied_probs, decimal_odds = simulate_contest()
+print(f"Implied probabilities: {implied_probs}")
+print(f"Decimal odds: {decimal_odds}")
