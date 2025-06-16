@@ -29,6 +29,7 @@
   - `loc_y`: y coordinate of the shot
   - `shot_zone_area`: categorized shot zone
   - `shot_type`: type of shot (e.g., fadeaway, pull-up jump shot)
+  - `season`: models the recency of the shot taken
 
 - **Post-processing**:  
   Applied a constant multiplicative scaling to account for the ~25% higher shooting percentage in 3pt contests compared to in-game shots.
@@ -50,14 +51,20 @@
 ### Logistic Regression
 
 **Advantages**:
-- Granular, shot-by-shot data (location and type).
+- Incorporates granular, shot-by-shot data (location and type).
 - Flexible with potential to incorporate more features.
 
 **Disadvantages**:
-- Lacks defender proximity data — hurts accuracy for tightly-defended players.
+- Doesn't account for "open-ness" of shots — hurts accuracy for tightly-defended players.
 - Requires assumptions for adjusting contest performance.
+- Does not account for previous contest data.
 
 > Example issue: Bias against players like Damian Lillard who are typically closely defended.
+
+**Potential Improvements**:
+- Main issue is a lack of more granular data.
+- The ML model would be improved given defender proximity data which is not publically accessible.
+- Given shot-by-shot data from past 3pt contests would have allowed the model to account for increased performance in 3pt contests.
 
 ---
 
@@ -77,11 +84,11 @@
 
 Inferences are drawn via Monte Carlo simulation using the model-generated probabilities.
 
-### `simulate_contest(model, n)`
+### `simulate_contest(model="bayesian", n=1000)`
 - Simulates the full 3pt contest (first + final rounds) across 8 participants.
 - Runs `n` simulations and outputs implied win probabilities for each player.
 
-### `simulate(playerid, model, n)`
+### `simulate(playerid, model="bayesian, n=1000)`
 - Simulates a single round for one player (`playerid`).
 - Runs `n` simulations and returns score distribution.
 - Can be used to answer questions like:

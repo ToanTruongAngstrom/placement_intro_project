@@ -77,14 +77,13 @@ def sim_round(thetas, commentary, money_balls, dew_balls):
         print(f"Total score: {score}")
     return score
 
-def simulate_contest(model="bayesian"):
+def simulate_contest(model="bayesian", n=1000):
     try:
         f = open("data/participants.json")
     except FileNotFoundError:
         load_participant_info()
         f = open("data/participants.json")
     
-    n = 1000
     participants = json.load(f)
     f.close()
 
@@ -119,12 +118,13 @@ def simulate_contest(model="bayesian"):
     counts = Counter(winners)
     implied_probs = {key: 100 * counts[key] / n for key in counts.keys()}
     decimal_odds = {key: round(100 / implied_probs[key], 1) for key in counts.keys()}
-    print(implied_probs)
-    print(decimal_odds)
+    return implied_probs, decimal_odds
     
 # scores = simulate(1314, model="log_reg", n=1000)
 # counts = Counter(scores)
 # plt.bar(counts.keys(), counts.values())
 # plt.show()
 
-simulate_contest("log_reg")
+implied_probs, decimal_odds = simulate_contest()
+print(f"Implied probabilities: {implied_probs}")
+print(f"Decimal odds: {decimal_odds}")

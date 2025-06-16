@@ -271,8 +271,9 @@ def load_shot_chart(playerid):
             context_measure_simple='FG3A'
         )
         time.sleep(1)
-        
-        shots.append(shotchart.get_data_frames()[0])
+        df = shotchart.get_data_frames()[0]
+        df['SEASON'] = year - 1999
+        shots.append(df)
 
     shot_data = pd.concat(shots)
 
@@ -285,4 +286,3 @@ def load_shot_chart(playerid):
         json.dump(new_shots, f, indent=2)
 
     return new_shots
-

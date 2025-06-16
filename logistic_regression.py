@@ -22,7 +22,7 @@ def get_shot_chart(playerid):
 
 def train(playerid, print_eval=False):
     df = get_shot_chart(playerid)
-    x = df[['LOC_X', 'LOC_Y', 'SHOT_ZONE_AREA', 'SHOT_DISTANCE', 'SHOT_TYPE']]
+    x = df[['LOC_X', 'LOC_Y', 'SHOT_ZONE_AREA', 'SHOT_DISTANCE', 'SHOT_TYPE', 'SEASON']]
     y = df['SHOT_MADE_FLAG']
 
     # One-Hot encoding for categorical columns
@@ -63,20 +63,17 @@ def get_probabilities_by_location(playerid):
 
     # Get prediction of probability in each spot
     three_point_locations = [
-        {"LOC_X": -220, "LOC_Y": 0,   "SHOT_ZONE_AREA": "Left Side(L)",          "SHOT_DISTANCE": 22, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": -150, "LOC_Y": 220, "SHOT_ZONE_AREA": "Left Side Center(LC)",  "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": 0,    "LOC_Y": 260, "SHOT_ZONE_AREA": "Center(C)",             "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": 150,  "LOC_Y": 220, "SHOT_ZONE_AREA": "Right Side Center(RC)", "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": 220,  "LOC_Y": 0,   "SHOT_ZONE_AREA": "Right Side(R)",         "SHOT_DISTANCE": 22, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": -92,  "LOC_Y": 290, "SHOT_ZONE_AREA": "Left Side Center(LC)",  "SHOT_DISTANCE": 30, "SHOT_TYPE": "3PT Field Goal"},
-        {"LOC_X": 92,   "LOC_Y": 290, "SHOT_ZONE_AREA": "Right Side Center(RC)", "SHOT_DISTANCE": 30, "SHOT_TYPE": "3PT Field Goal"}
+        {"LOC_X": -220, "LOC_Y": 0,   "SHOT_ZONE_AREA": "Left Side(L)",          "SHOT_DISTANCE": 22, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": -150, "LOC_Y": 220, "SHOT_ZONE_AREA": "Left Side Center(LC)",  "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": 0,    "LOC_Y": 260, "SHOT_ZONE_AREA": "Center(C)",             "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": 150,  "LOC_Y": 220, "SHOT_ZONE_AREA": "Right Side Center(RC)", "SHOT_DISTANCE": 24, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": 220,  "LOC_Y": 0,   "SHOT_ZONE_AREA": "Right Side(R)",         "SHOT_DISTANCE": 22, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": -92,  "LOC_Y": 290, "SHOT_ZONE_AREA": "Left Side Center(LC)",  "SHOT_DISTANCE": 30, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25},
+        {"LOC_X": 92,   "LOC_Y": 290, "SHOT_ZONE_AREA": "Right Side Center(RC)", "SHOT_DISTANCE": 30, "SHOT_TYPE": "3PT Field Goal", "SEASON": 25}
     ]
 
     df = pd.DataFrame(three_point_locations)
     thetas = model.predict_proba(df)[:, 1]
     # Constant multiplicative scaling by the league average difference shooting percentage between in game and 3pt contest 3s.
-    # Can we now weight this based on the percentage of in-game 3s are wide open?
     k = 5/4
     return [theta * k for theta in thetas]
-
-# print(get_probabilities_by_location(1050))
