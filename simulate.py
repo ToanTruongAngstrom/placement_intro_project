@@ -55,7 +55,6 @@ def sim_round(thetas, commentary, money_balls, dew_balls):
     By default, last rack is the money rack and that dew balls are shot after the
     second and third racks.
     '''
-    # Scale up thetas somehow? Both models currently have players underperforming.
     score = 0
     for i in range(27):
         if i in dew_balls:
@@ -97,21 +96,8 @@ def simulate_contest(model="bayesian", n=1000):
             os.remove(file)
 
     for i in range(n):
-        scores = dict()
-        for participant in participants:
-            name = participant["firstname"] + " " + participant["surname"]
-            id = participant["playerid"]
-            scores[id] = {"name": name, "score": simulate(id, model=model)}
-        
-        # Take the 3 highest scorers
-        finalists = heapq.nlargest(3, scores.items(), key=lambda i: i[1]["score"])
-        final_scores = dict()
-        # For the 3 finalists, simulate another round and store their scores
-        for participant in finalists:
-            id = participant[0]
-            final_scores[id] = {"name": participant[1]["name"], "score": simulate(id, model=model)}
-        # Determines the winner of the contest
-        winner = max(final_scores.values(), key=lambda x:x["score"])["name"]
+        finalists = sim_qualifiers(participants, model)
+        winner = sim_finals(finalists, model)
         winners.append(winner)
 
     # Calculate the implied probabilities of each player winning
@@ -119,12 +105,29 @@ def simulate_contest(model="bayesian", n=1000):
     implied_probs = {key: 100 * counts[key] / n for key in counts.keys()}
     decimal_odds = {key: round(100 / implied_probs[key], 1) for key in counts.keys()}
     return implied_probs, decimal_odds
+
+def sim_qualifiers(participants, model="bayesian"):
+    scores = dict()
+    for participant in participants:
+        name = participant["firstname"] + " " + participant["surname"]
+        id = participant["playerid"]
+        scores[id] = {"name": name, "score": simulate(id, model=model)}
+    finalists = heapq.nlargest(3, scores.items(), key=lambda i: i[1]["score"])
+    return finalists
     
-# scores = simulate(1314, model="log_reg", n=1000)
+def sim_finals(finalists, model="bayesian"):
+    final_scores = dict()
+    for participant in finalists:
+        id = participant[0]
+        final_scores[id] = {"name": participant[1]["name"], "score": simulate(id, model=model)}
+    winner = max(final_scores.values(), key=lambda x:x["score"])["name"]
+    return winner
+    
+# scores = simulate(1050, n=1000)
 # counts = Counter(scores)
 # plt.bar(counts.keys(), counts.values())
 # plt.show()
 
-implied_probs, decimal_odds = simulate_contest()
-print(f"Implied probabilities: {implied_probs}")
-print(f"Decimal odds: {decimal_odds}")
+# implied_probs, decimal_odds = simulate_contest()
+# print(f"Implied probabilities: {implied_probs}")
+# print(f"Decimal odds: {decimal_odds}")

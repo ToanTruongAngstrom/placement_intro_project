@@ -41,7 +41,10 @@ def get_priors(playerid):
 
     epsilon = 0.001 # To avoid 0s in extreme cases
 
-    k = 0.5 # Since we want shots from historical 3pt contests to count for more than in-game shots, we need a scale factor k.
+    k = 0.25 # Since we want shots from historical 3pt contests to count for more than in-game shots, we need a scale factor k.
+    c = 5/4 # Constant multiplicative scaling by the league average difference shooting percentage between in game and 3pt contest 3s.
+    shot_distance_data["fg_pc_20-24"] *= c
+    shot_distance_data["fg_pc_25-29"] *= c
 
     # Avoid division by zero errors, give low percentages for low volume shooters 
     if (shot_distance_data["fga_20-24"] + shot_distance_data["fga_25-29"]) == 0:
