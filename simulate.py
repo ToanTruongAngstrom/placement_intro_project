@@ -11,9 +11,9 @@ from logistic_regression import get_probabilities_by_location
 from data_collection import load_participant_info, get_name_by_id
 
 # By default, the last rack is the money rack and dew balls are shot after the second and third racks.
-def simulate(playerid, model="bayesian", n=1, commentary=False, money_balls=[4, 9, 15, 21, 22, 23, 24, 25, 26], dew_balls=[10,16]):
+def simulate(playerid, model="bayesian", n=1, k=0.2, c=1.2, commentary=False, money_balls=[4, 9, 15, 21, 22, 23, 24, 25, 26], dew_balls=[10,16]):
     if model == "bayesian":
-        scores = simulate_bayesian(playerid, n, commentary, money_balls, dew_balls)
+        scores = simulate_bayesian(playerid, n, k, c, commentary, money_balls, dew_balls)
     elif model == "log_reg":
         scores = simulate_log_reg(playerid, n, commentary, money_balls, dew_balls)
     else:
@@ -21,9 +21,9 @@ def simulate(playerid, model="bayesian", n=1, commentary=False, money_balls=[4, 
         return []
     return scores
 
-def simulate_bayesian(playerid, n, commentary, money_balls, dew_balls):
+def simulate_bayesian(playerid, n, k, c, commentary, money_balls, dew_balls):
     # n separate realisations of theta_reg and theta_dew according to beta posterior distribution
-    thetas_reg, thetas_dew = get_bayesian_probs(n, playerid)
+    thetas_reg, thetas_dew = get_bayesian_probs(n, k, c, playerid)
     scores = []
 
     if commentary:
@@ -203,3 +203,36 @@ def sim_finals(finalists, model="bayesian"):
 # implied_probs, decimal_odds = simulate_contest()
 # print(f"Implied probabilities: {implied_probs}")
 # print(f"Decimal odds: {decimal_odds}")
+
+# Perform a grid search for the scaling factors in the Bayesian model.
+def grid_search():
+    # k represents the how much we value in-game 3pt data compared to contest data.
+    # c represents how much we scale in-game data to reflect increased percentages in the contests.
+    k_values = [x / 10.0 for x in range(2, 5)]
+    c_values = [x / 20.0 for x in range(20, 30)]
+    with open("data/past_scores.json") as f:
+        past_scores = json.load(f)
+
+    min_error = float('inf')
+    best_params = None
+    
+    for k in k_values:
+        for c in c_values:
+            squared_err = 0
+            total_count = 0
+            for player_id, real_scores in past_scores.items():
+                sim_scores = simulate(int(player_id), k=k, c=c, n=1000)
+                sim_mean = sum(sim_scores) / len(sim_scores)
+                for score in real_scores:
+                    squared_err += (score - sim_mean) ** 2
+                    total_count += 1
+
+            mse = squared_err / total_count
+
+            if mse < min_error:
+                min_error = mse
+                best_params = (k, c)
+            
+            print(f"k = {k}, c = {c}, mse = {mse}")
+
+    return best_params

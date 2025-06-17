@@ -35,16 +35,14 @@ Intuition for the priors: "If a player took 500 threes in the last 100 games,
 and 40% of them were from 25-29 ft, then let's use 500, scaled down, to construct a pseudo-count prior.
 For the dew balls, only use those 40% of long threes."
 '''
-def get_priors(playerid):
+def get_priors(playerid, k, c):
     last_100_data = get_3ptfg_last_100(int(playerid)) # made, att, 3pt%
     shot_distance_data = get_shot_distance_data(int(playerid)) # fgm_20-24, fga_20-24, fg_pc_20-24, fgm_25-29, fga_25-29, fg_pc_25-29
 
     epsilon = 0.001 # To avoid 0s in extreme cases
 
-    k = 0.25 # Since we want shots from historical 3pt contests to count for more than in-game shots, we need a scale factor k.
-    c = 5/4 # Constant multiplicative scaling by the league average difference shooting percentage between in game and 3pt contest 3s.
-    shot_distance_data["fg_pc_20-24"] *= c
-    shot_distance_data["fg_pc_25-29"] *= c
+    new_pc_short = shot_distance_data["fg_pc_20-24"] * c
+    new_pc_long = shot_distance_data["fg_pc_25-29"] * c
 
     # Avoid division by zero errors, give low percentages for low volume shooters 
     if (shot_distance_data["fga_20-24"] + shot_distance_data["fga_25-29"]) == 0:
@@ -53,13 +51,13 @@ def get_priors(playerid):
     pc_long_threes = shot_distance_data["fga_25-29"] / (shot_distance_data["fga_20-24"] + shot_distance_data["fga_25-29"])
 
     # alpha prior represents assumed number of makes in the data
-    alpha_reg_prior = shot_distance_data["fg_pc_20-24"] * last_100_data["att"] * k + epsilon
+    alpha_reg_prior = new_pc_short * last_100_data["att"] * k + epsilon
     # beta prior represents assumed number of misses in the data
-    beta_reg_prior = (1-shot_distance_data["fg_pc_20-24"]) * last_100_data["att"] * k + epsilon
+    beta_reg_prior = (1-new_pc_short) * last_100_data["att"] * k + 2 * epsilon
 
     # Prior distribution for dew shots
-    alpha_dew_prior = shot_distance_data["fg_pc_25-29"] * last_100_data["att"] * pc_long_threes * k + epsilon
-    beta_dew_prior = (1-shot_distance_data["fg_pc_25-29"]) * last_100_data["att"] * pc_long_threes * k + epsilon
+    alpha_dew_prior = new_pc_long* last_100_data["att"] * pc_long_threes * k + epsilon
+    beta_dew_prior = (1-new_pc_long) * last_100_data["att"] * pc_long_threes * k + 2 * epsilon
 
     return (alpha_reg_prior, beta_reg_prior, alpha_dew_prior, beta_dew_prior)
 
@@ -86,8 +84,8 @@ def get_results(playerid):
     return
 
 # Perform Bayesian updating of the shot percentage distribution based on previous contest data
-def update(playerid):
-    (alpha_reg_prior, beta_reg_prior, alpha_dew_prior, beta_dew_prior) = get_priors(playerid)
+def update(playerid, k, c):
+    (alpha_reg_prior, beta_reg_prior, alpha_dew_prior, beta_dew_prior) = get_priors(playerid, k, c)
     (made, att, dewmade, dewatt) = get_results(playerid)
     alpha_reg_post = alpha_reg_prior + made
     beta_reg_post = beta_reg_prior + (att - made)
@@ -96,8 +94,8 @@ def update(playerid):
 
     return (alpha_reg_post, beta_reg_post, alpha_dew_post, beta_dew_post)
 
-def get_probabilities(n, playerid):
-    (alpha_reg, beta_reg, alpha_dew, beta_dew) = update(playerid)
+def get_probabilities(n, k, c, playerid):
+    (alpha_reg, beta_reg, alpha_dew, beta_dew) = update(playerid, k, c)
     theta_reg_dist = scipy.stats.beta(alpha_reg, beta_reg)
     theta_dew_dist = scipy.stats.beta(alpha_dew, beta_dew)
     samples_reg = theta_reg_dist.rvs(n)
