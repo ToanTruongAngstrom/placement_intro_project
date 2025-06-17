@@ -76,7 +76,7 @@ def sim_round(thetas, commentary, money_balls, dew_balls):
         print(f"Total score: {score}")
     return score
 
-def simulate_contest(model="bayesian", n=1000):
+def get_participants():
     try:
         f = open("data/participants.json")
     except FileNotFoundError:
@@ -85,7 +85,10 @@ def simulate_contest(model="bayesian", n=1000):
     
     participants = json.load(f)
     f.close()
+    return participants
 
+def simulate_contest(model="bayesian", n=1000):
+    participants = get_participants()
     winners = []
 
     # Delete any old stored logistic regression models/data
@@ -98,7 +101,7 @@ def simulate_contest(model="bayesian", n=1000):
     for i in range(n):
         finalists = sim_qualifiers(participants, model)
         winner = sim_finals(finalists, model)
-        winners.append(winner)
+        winners.append(winner["name"])
 
     # Calculate the implied probabilities of each player winning
     counts = Counter(winners)
@@ -182,14 +185,14 @@ def sim_finals(finalists, model="bayesian"):
     top_ids = [id for id, p in final_scores.items() if p["score"] == max_score]
 
     if len(top_ids) == 1:
-        return final_scores[top_ids[0]]["name"]
+        return final_scores[top_ids[0]]
 
     # Tie detected: build tie group
     tie_group = [(id, {"name": final_scores[id]["name"]}) for id in top_ids]
 
     # Break the tie until one winner remains
     winner = sim_tiebreak(tie_group, num_needed=1, model=model)[0]
-    return winner[1]["name"]
+    return winner[1]
 
     
 # scores = simulate(1050, n=1000)
@@ -197,6 +200,6 @@ def sim_finals(finalists, model="bayesian"):
 # plt.bar(counts.keys(), counts.values())
 # plt.show()
 
-implied_probs, decimal_odds = simulate_contest()
-print(f"Implied probabilities: {implied_probs}")
-print(f"Decimal odds: {decimal_odds}")
+# implied_probs, decimal_odds = simulate_contest()
+# print(f"Implied probabilities: {implied_probs}")
+# print(f"Decimal odds: {decimal_odds}")

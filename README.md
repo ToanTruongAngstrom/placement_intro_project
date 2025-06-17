@@ -87,9 +87,10 @@ Inferences are drawn via Monte Carlo simulation using the model-generated probab
 ### `simulate_contest(model="bayesian", n=1000)`
 - Simulates the full 3pt contest (first + final rounds) across 8 participants.
 - Runs `n` simulations and outputs implied win probabilities for each player.
+- Tie breaks are dealt with iteratively to ensure there is exactly one winner 
 
 ### `simulate(playerid, model="bayesian, n=1000)`
-- Simulates a single round for one player (`playerid`).
+- Simulates an individual round for one player (`playerid`).
 - Runs `n` simulations and returns score distribution.
 - Can be used to answer questions like:
   - "How likely is a player to make all money balls?" *(work in progress)*
