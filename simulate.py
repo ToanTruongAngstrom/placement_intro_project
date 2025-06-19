@@ -239,7 +239,7 @@ def grid_search():
 # print(f"Implied probabilities: {implied_probs}")
 # print(f"Decimal odds: {decimal_odds}")
 
-bookies_odds = {'Damian Lillard': 4.25, 'Buddy Hield': 5.75, 'Darius Garland': 6, 'Norman Powell': 7, 'Tyler Herro': 8, 'Cameron Johnson': 8.5, 'Jalen Brunson': 9, 'Cade Cunningham': 12}
+bookies_odds = {'Damian Lillard': 4.7, 'Tyrese Haliburton': 5.4, 'Trae Young': 6.5, 'Malik Beasley': 7.5, 'Karl-Anthony Towns': 8, 'Lauri Markkanen': 9, 'Jalen Brunson': 8, 'Donovan Mitchell': 10.5}
 bookies_probabilities = {key: 100/bookies_odds[key] for key in bookies_odds.keys()}
 
 implied_probs, decimal_odds = simulate_contest()
@@ -252,4 +252,5 @@ df = pd.DataFrame({
 df = df.round(2).sort_values('Model Implied %', ascending=False)
 
 print(df)
+print(df.corr())
 print(decimal_odds)

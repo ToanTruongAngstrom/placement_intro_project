@@ -63,13 +63,13 @@ def load_participant_info():
     f.close()
 
     participants = [{"firstname": "Jalen", "surname": "Brunson"}, 
-                    {"firstname": "Cade", "surname": "Cunningham"},
-                    {"firstname": "Darius", "surname": "Garland"},
-                    {"firstname": "Tyler", "surname": "Herro"},
-                    {"firstname": "Buddy", "surname": "Hield"},
-                    {"firstname": "Cameron", "surname": "Johnson"},
+                    {"firstname": "Karl-Anthony", "surname": "Towns"},
+                    {"firstname": "Tyrese", "surname": "Haliburton"},
+                    {"firstname": "Malik", "surname": "Beasley"},
+                    {"firstname": "Trae", "surname": "Young"},
+                    {"firstname": "Lauri", "surname": "Markkanen"},
                     {"firstname": "Damian", "surname": "Lillard"},
-                    {"firstname": "Norman", "surname": "Powell"}]
+                    {"firstname": "Donovan", "surname": "Mitchell"}]
 
     participant_info = []
     for player in players:
