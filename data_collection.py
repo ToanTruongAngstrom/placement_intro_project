@@ -62,14 +62,14 @@ def load_participant_info():
     players = json.load(f)
     f.close()
 
-    participants = [{"firstname": "Jalen", "surname": "Brunson"}, 
-                    {"firstname": "Karl-Anthony", "surname": "Towns"},
+    participants = [{"firstname": "Buddy", "surname": "Hield"}, 
+                    {"firstname": "Kevin", "surname": "Huerter"},
                     {"firstname": "Tyrese", "surname": "Haliburton"},
-                    {"firstname": "Malik", "surname": "Beasley"},
-                    {"firstname": "Trae", "surname": "Young"},
+                    {"firstname": "Tyler", "surname": "Herro"},
+                    {"firstname": "Jayson", "surname": "Tatum"},
                     {"firstname": "Lauri", "surname": "Markkanen"},
                     {"firstname": "Damian", "surname": "Lillard"},
-                    {"firstname": "Donovan", "surname": "Mitchell"}]
+                    {"firstname": "Julius", "surname": "Randle"}]
 
     participant_info = []
     for player in players:
