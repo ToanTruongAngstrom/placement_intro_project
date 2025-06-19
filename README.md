@@ -102,7 +102,7 @@ Inferences are drawn via Monte Carlo simulation using the model-generated probab
 
 ---
 
-## Testing
+## Testing and Evaluation
 
 The implied probabilities from my model were compared against the odds offered by Bet365: https://news.bet365.com/en-us/article/nba-3-point-contest-outright-odds/2025021120214058187
 
@@ -118,3 +118,9 @@ The implied probabilities from my model were compared against the odds offered b
 | Cade Cunningham | 8.33                                | 3.4             |
 
 This gives a correlation coefficient of 0.85.
+
+To check if this is overfitted, I ran the same model with the participants of the 2024 and 2023 3pt contests.
+- 2024: Correlation coefficient = 0.45
+- 2023: Correlation coefficient = 0.68
+- This might suggest my model was over-tuned. 
+  - However, it may just be because the model uses future data that was not available at the time of those contests, so it makes sense that the probabilities generated are different.
