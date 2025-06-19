@@ -195,16 +195,6 @@ def sim_finals(finalists, model="bayesian"):
     winner = sim_tiebreak(tie_group, num_needed=1, model=model)[0]
     return winner[1]
 
-    
-# scores = simulate(1050, n=1000)
-# counts = Counter(scores)
-# plt.bar(counts.keys(), counts.values())
-# plt.show()
-
-# implied_probs, decimal_odds = simulate_contest()
-# print(f"Implied probabilities: {implied_probs}")
-# print(f"Decimal odds: {decimal_odds}")
-
 # Perform a grid search for the scaling factors in the Bayesian model.
 def grid_search():
     # k represents the how much we value in-game 3pt data compared to contest data.
@@ -240,10 +230,19 @@ def grid_search():
 
 # print(grid_search())
 
+# scores = simulate(1050, n=1000)
+# counts = Counter(scores)
+# plt.bar(counts.keys(), counts.values())
+# plt.show()
+
+# implied_probs, decimal_odds = simulate_contest()
+# print(f"Implied probabilities: {implied_probs}")
+# print(f"Decimal odds: {decimal_odds}")
+
 bookies_odds = {'Damian Lillard': 4.25, 'Buddy Hield': 5.75, 'Darius Garland': 6, 'Norman Powell': 7, 'Tyler Herro': 8, 'Cameron Johnson': 8.5, 'Jalen Brunson': 9, 'Cade Cunningham': 12}
 bookies_probabilities = {key: 100/bookies_odds[key] for key in bookies_odds.keys()}
 
-implied_probs, _ = simulate_contest()
+implied_probs, decimal_odds = simulate_contest()
 
 df = pd.DataFrame({
     'Bookies Implied %': bookies_probabilities,
@@ -253,3 +252,4 @@ df = pd.DataFrame({
 df = df.round(2).sort_values('Model Implied %', ascending=False)
 
 print(df)
+print(decimal_odds)

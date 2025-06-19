@@ -86,8 +86,8 @@ def get_results(playerid):
     return
 
 # Perform Bayesian updating of the shot percentage distribution based on previous contest data
-def update(playerid, k, c):
-    (alpha_reg_prior, beta_reg_prior, alpha_dew_prior, beta_dew_prior) = get_priors(playerid, k, c)
+def update(playerid, w, k):
+    (alpha_reg_prior, beta_reg_prior, alpha_dew_prior, beta_dew_prior) = get_priors(playerid, w, k)
     (made, att, dewmade, dewatt) = get_results(playerid)
     alpha_reg_post = alpha_reg_prior + made
     beta_reg_post = beta_reg_prior + (att - made)
@@ -96,8 +96,8 @@ def update(playerid, k, c):
 
     return (alpha_reg_post, beta_reg_post, alpha_dew_post, beta_dew_post)
 
-def get_probabilities(n, k, c, playerid):
-    (alpha_reg, beta_reg, alpha_dew, beta_dew) = update(playerid, k, c)
+def get_probabilities(n, w, k, playerid):
+    (alpha_reg, beta_reg, alpha_dew, beta_dew) = update(playerid, w, k)
     theta_reg_dist = scipy.stats.beta(alpha_reg, beta_reg)
     theta_dew_dist = scipy.stats.beta(alpha_dew, beta_dew)
     samples_reg = theta_reg_dist.rvs(n)
