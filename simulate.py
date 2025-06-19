@@ -2,6 +2,7 @@ from collections import Counter, defaultdict
 import glob
 import heapq
 import os
+import pandas as pd
 import scipy.stats
 import numpy as np
 import json
@@ -11,9 +12,9 @@ from logistic_regression import get_probabilities_by_location
 from data_collection import load_participant_info, get_name_by_id
 
 # By default, the last rack is the money rack and dew balls are shot after the second and third racks.
-def simulate(playerid, model="bayesian", n=1, k=0.2, c=1.2, commentary=False, money_balls=[4, 9, 15, 21, 22, 23, 24, 25, 26], dew_balls=[10,16]):
+def simulate(playerid, model="bayesian", n=1, w=0.2, k=1.3, commentary=False, money_balls=[4, 9, 15, 21, 22, 23, 24, 25, 26], dew_balls=[10,16]):
     if model == "bayesian":
-        scores = simulate_bayesian(playerid, n, k, c, commentary, money_balls, dew_balls)
+        scores = simulate_bayesian(playerid, n, w, k, commentary, money_balls, dew_balls)
     elif model == "log_reg":
         scores = simulate_log_reg(playerid, n, commentary, money_balls, dew_balls)
     else:
@@ -21,9 +22,9 @@ def simulate(playerid, model="bayesian", n=1, k=0.2, c=1.2, commentary=False, mo
         return []
     return scores
 
-def simulate_bayesian(playerid, n, k, c, commentary, money_balls, dew_balls):
+def simulate_bayesian(playerid, n, w, k, commentary, money_balls, dew_balls):
     # n separate realisations of theta_reg and theta_dew according to beta posterior distribution
-    thetas_reg, thetas_dew = get_bayesian_probs(n, k, c, playerid)
+    thetas_reg, thetas_dew = get_bayesian_probs(n, w, k, playerid)
     scores = []
 
     if commentary:
@@ -208,20 +209,20 @@ def sim_finals(finalists, model="bayesian"):
 def grid_search():
     # k represents the how much we value in-game 3pt data compared to contest data.
     # c represents how much we scale in-game data to reflect increased percentages in the contests.
-    k_values = [x / 10.0 for x in range(2, 5)]
-    c_values = [x / 20.0 for x in range(20, 30)]
+    w_values = [x / 10.0 for x in range(2, 5)]
+    k_values = [x / 20.0 for x in range(20, 30)]
     with open("data/past_scores.json") as f:
         past_scores = json.load(f)
 
     min_error = float('inf')
     best_params = None
     
-    for k in k_values:
-        for c in c_values:
+    for w in w_values:
+        for k in k_values:
             squared_err = 0
             total_count = 0
             for player_id, real_scores in past_scores.items():
-                sim_scores = simulate(int(player_id), k=k, c=c, n=1000)
+                sim_scores = simulate(int(player_id), w=w, k=k, n=1000)
                 sim_mean = sum(sim_scores) / len(sim_scores)
                 for score in real_scores:
                     squared_err += (score - sim_mean) ** 2
@@ -231,8 +232,24 @@ def grid_search():
 
             if mse < min_error:
                 min_error = mse
-                best_params = (k, c)
+                best_params = (w, k)
             
-            print(f"k = {k}, c = {c}, mse = {mse}")
+            print(f"w = {w}, k = {k}, mse = {mse}")
 
     return best_params
+
+# print(grid_search())
+
+bookies_odds = {'Damian Lillard': 4.25, 'Buddy Hield': 5.75, 'Darius Garland': 6, 'Norman Powell': 7, 'Tyler Herro': 8, 'Cameron Johnson': 8.5, 'Jalen Brunson': 9, 'Cade Cunningham': 12}
+bookies_probabilities = {key: 100/bookies_odds[key] for key in bookies_odds.keys()}
+
+implied_probs, _ = simulate_contest()
+
+df = pd.DataFrame({
+    'Bookies Implied %': bookies_probabilities,
+    'Model Implied %': {name: implied_probs[name] for name in bookies_odds}
+})
+
+df = df.round(2).sort_values('Model Implied %', ascending=False)
+
+print(df)

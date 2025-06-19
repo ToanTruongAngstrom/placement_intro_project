@@ -204,7 +204,7 @@ def load_shot_distance_data(playerid):
         "PlusMinus": "N",
         "Rank": "N",
         "Season": "2024-25",
-        "SeasonSegment": "",
+        "SeasonSegment": "Pre All-Star",
         "SeasonType": "Regular Season",
         "ShotClockRange": "",
         "StarterBench": "",

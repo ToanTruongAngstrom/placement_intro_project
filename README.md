@@ -75,10 +75,12 @@
 **Advantages**:
 - Incorporates prior 3pt contest history (valuable signal).
 - Models uncertainty in shooting performance via posterior.
+- Easily tuned when more data is made available.
 
 **Disadvantages**:
 - Less granular — treats all shots in same rack category equally.
-- Does not account for location-based shot variation (e.g., corner vs top-of-key).
+  - Does not account for location-based shot variation (e.g., corner vs top-of-key).
+- Prior distribution is important to model those with no data for updating.
 
 ---
 
@@ -86,16 +88,16 @@
 
 Inferences are drawn via Monte Carlo simulation using the model-generated probabilities.
 
-### `simulate_contest(model="bayesian", n=1000)`
-- Simulates the full 3pt contest (first + final rounds) across 8 participants.
-- Runs `n` simulations and outputs implied win probabilities for each player.
-- Tie breaks are dealt with iteratively to ensure there is exactly one winner 
-
 ### `simulate(playerid, model="bayesian, n=1000)`
 - Simulates an individual round for one player (`playerid`).
 - Runs `n` simulations and returns score distribution.
 - Can be used to answer questions like:
-  - "How likely is a player to make all money balls?" *(work in progress)*
+  - "How likely is a player to make all money balls?"
+
+### `simulate_contest(model="bayesian", n=1000)`
+- Simulates the full 3pt contest (first + final rounds) across 8 participants.
+- Runs `n` simulations and outputs implied win probabilities for each player.
+- Tie breaks are dealt with iteratively to ensure there is exactly one winner.
 
 ---
 
