@@ -1,4 +1,4 @@
-# 3pt contest
+# NBA 3-Point Contest Modelling
 ## Data Collection
 
 ### Sources
@@ -93,6 +93,7 @@ Inferences are drawn via Monte Carlo simulation using the model-generated probab
 - Runs `n` simulations and returns score distribution.
 - Can be used to answer questions like:
   - "How likely is a player to make all money balls?"
+  - (see extension)
 
 ### `simulate_contest(model="bayesian", n=1000)`
 - Simulates the full 3pt contest (first + final rounds) across 8 participants.
@@ -101,3 +102,19 @@ Inferences are drawn via Monte Carlo simulation using the model-generated probab
 
 ---
 
+## Testing
+
+The implied probabilities from my model were compared against the odds offered by Bet365: https://news.bet365.com/en-us/article/nba-3-point-contest-outright-odds/2025021120214058187
+
+| Player          | Bookies Implied % (includes margin) | Model Implied % |
+| --------------- | ------------------------------------| ----------------|
+| Damian Lillard  | 23.53                               | 22.5            |
+| Norman Powell   | 14.29                               | 19.6            |
+| Buddy Hield     | 17.39                               | 18.7            |
+| Darius Garland  | 16.67                               | 12.9            |
+| Cameron Johnson | 11.76                               | 10.5            |
+| Jalen Brunson   | 11.11                               | 7.5             |
+| Tyler Herro     | 12.50                               | 4.9             |
+| Cade Cunningham | 8.33                                | 3.4             |
+
+This gives a correlation coefficient of 0.85.

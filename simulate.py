@@ -252,4 +252,5 @@ df = pd.DataFrame({
 df = df.round(2).sort_values('Model Implied %', ascending=False)
 
 print(df)
+print(df.corr())
 print(decimal_odds)
