@@ -1,11 +1,10 @@
-# How likely is each player to advance from the qualifying round?
 import glob
 import json
 import os
 from data_collection import load_participant_info
 from simulate import get_participants, sim_finals, sim_qualifiers, simulate
 
-
+# How likely is each player to advance from the qualifying round?
 def chance_of_qualifying(playerid, model="bayesian", n=1000):
     participants = get_participants()
     # Delete any old stored logistic regression models/data

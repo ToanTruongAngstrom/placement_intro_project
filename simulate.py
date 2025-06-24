@@ -230,7 +230,7 @@ def grid_search():
 
 # print(grid_search())
 
-# scores = simulate(1050, n=1000)
+# scores = simulate(1050, n=10000)
 # counts = Counter(scores)
 # plt.bar(counts.keys(), counts.values())
 # plt.show()
@@ -252,5 +252,5 @@ df = pd.DataFrame({
 df = df.round(2).sort_values('Model Implied %', ascending=False)
 
 print(df)
-print(df.corr())
-print(decimal_odds)
+# print(df.corr())
+# print(decimal_odds)

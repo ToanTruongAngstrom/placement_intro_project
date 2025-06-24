@@ -41,7 +41,7 @@
 - Shot percentage modelled via a **Beta distribution**.
 - Separated into `ϑ_reg` and `ϑ_dew`, each with its own distribution.
 - **Prior**: Estimated from in-game 3pt makes/misses over past 100 games.
-  - These are weighted and scaled according to hyper-parameters c, k
+  - These are weighted and scaled according to hyper-parameters w, k
   - Parameters are tuned via grid search
 - **Bayesian Updating**: If available, used past 3pt contest data to perform a Beta-Binomial update.
 - **Posterior** reflects both game performance and historical contest results.
